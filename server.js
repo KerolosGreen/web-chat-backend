@@ -1,4 +1,4 @@
-const io = require('socket.io')(3002,{
+const io = require('socket.io')(3005,{
     cors:{
         origin:['http://localhost:3000']
     }
@@ -12,7 +12,7 @@ io.on('connection',(socket)=>{
             socket.room=room
             socket.name=username
             message('You joined Room : '+room)
-            socket.to(room).emit('recieve-message', username+" has joined The Room")
+            socket.to(room).emit('recieve-message', username+" has joined The Room",username)
             console.log(socket.id +" Joined Room : "+room)
         })
 
@@ -23,18 +23,22 @@ io.on('connection',(socket)=>{
             res(message)
         }
         else{
-            socket.to(room).emit('recieve-message',username+" : "+message,username)
+            socket.to(room).emit('recieve-message',message,username)
             console.log("Message : "+message+" Sent In Room :"+room +" By "+username)
             res(message)
         }
     })
 
+    socket.on('startedtyping',(user)=>{
+        console.log('someone is typing')
+        socket.to(socket.room).emit('typing',user);
+    })
     
 
     socket.on("disconnect",()=>{
         console.log("User "+socket.id+" Disconnected")
         if(socket.room!=undefined){
-            socket.to(socket.room).emit('recieve-message',socket.name+" Disconnected")
+            socket.to(socket.room).emit('recieve-message',socket.name+" Disconnected",socket.name)
         }
     })
 
