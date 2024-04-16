@@ -1,6 +1,7 @@
 const io = require('socket.io')(3005,{
     cors:{
-        origin:['http://localhost:3000']
+        origin:['https://web-chat-client-three.vercel.app']
+        
     }
 })
 io.on('connection',(socket)=>{
